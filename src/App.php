@@ -20,23 +20,27 @@ class App
     {
         return Response::withJson(
             [
-                'message' => 'Hello, World! Send a POST request to /login to log in.',
-                'ts' => microtime(true) - ELEPHOX_START
+                'message' => 'Hello, World! Send a POST request to /info to get more info.',
+                'ts' => microtime(true) - ELEPHOX_START,
             ],
         );
     }
 
-    #[RequestHandler('login', RequestMethod::POST)]
-    public function handleLogin(RequestContext $context): Contract\Response
+    #[RequestHandler('info', RequestMethod::POST)]
+    public function info(RequestContext $context): Contract\Response
     {
-        return Response::withJson([]);
+        return Response::withJson([
+            'message' => "You successfully POSTed! Next, try to comment out the 'catchAll' handler and see your exception handler at work.",
+            'ts' => microtime(true) - ELEPHOX_START,
+        ]);
     }
 
     #[RequestHandler('{anything}')]
     public function catchAll(RequestContext $context): Contract\Response
     {
         return Response::withJson([
-            'message' => 'You sent a request to an invalid endpoint: ' . $context->getRequest()->getUrl(),
+            'message' => "You sent a request to an invalid endpoint: {$context->getRequest()->getUrl()}. Perhaps your request method ({$context->getRequest()->getMethod()->getValue()}) was invalid?",
+            'ts' => microtime(true) - ELEPHOX_START,
         ]);
     }
 
@@ -49,12 +53,36 @@ class App
     #[ExceptionHandler]
     public function globalExceptionHandler(ExceptionContext $context): void
     {
+        headers_sent() || header('Content-Type: text/html');
+
         echo <<<TEXT
-Uh-oh! This shouldn't have happened. An exception ocurred at {$context->getException()->getFile()}:{$context->getException()->getLine()}
-
-> {$context->getException()->getMessage()}
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Elephox Exception</title>
+</head>
+<body>
+    <h1>Oops!</h1>
+    <p>
+        An error occurred while processing your request.
+    </p>
+    <p>
+        <strong>Error:</strong> {$context->getException()->getMessage()}
+    </p>
+    <p>
+        <strong>File:</strong> {$context->getException()->getFile()}:{$context->getException()->getLine()}
+    </p>
+    <p>
+        <strong>Trace:</strong>
+    </p>
+    <pre>
 {$context->getException()->getTraceAsString()}
+    </pre>
+</body>
+</html>
 TEXT;
     }
 }
