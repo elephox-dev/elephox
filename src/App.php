@@ -3,43 +3,80 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Repositories\UserRepository;
 use Elephox\Core\Context\Contract\CommandLineContext;
 use Elephox\Core\Context\Contract\ExceptionContext;
 use Elephox\Core\Context\Contract\RequestContext;
+use Elephox\Core\Contract\App as AppContract;
 use Elephox\Core\Handler\Attribute\CommandHandler;
 use Elephox\Core\Handler\Attribute\ExceptionHandler;
-use Elephox\Core\Handler\Attribute\RequestHandler;
+use Elephox\Core\Handler\Attribute\Http\Any;
+use Elephox\Core\Handler\Attribute\Http\Get;
+use Elephox\Core\Handler\Attribute\Http\Post;
+use Elephox\Database\Contract\Storage;
+use Elephox\Database\MysqlStorage;
+use Elephox\DI\Contract\Container;
 use Elephox\Http\Contract;
-use Elephox\Http\RequestMethod;
 use Elephox\Http\Response;
+use Elephox\Http\Url;
+use JsonException;
+use RuntimeException;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run as WhoopsRunner;
 
-class App
+class App implements AppContract
 {
-    #[RequestHandler('/')]
-    public function handleIndex(): Contract\Response
+    public function __construct(Container $container)
     {
-        return Response::withJson(
-            [
-                'message' => 'Hello, World! Send a POST request to /info to get more info.',
-                'ts' => microtime(true) - ELEPHOX_START,
-            ],
-        );
+        $container->register(Storage::class, static function () {
+            $dsn = Url::fromString($_ENV['DB_DSN']);
+            $connection = mysqli_connect($dsn->getHost(), $dsn->getUsername(), $dsn->getPassword(), trim($dsn->getPath(), '/'));
+
+            return new MysqlStorage($connection);
+        });
+
+        $container->register(UserRepository::class, UserRepository::class);
+        $container->register(WhoopsRunner::class, WhoopsRunner::class);
     }
 
-    #[RequestHandler('info', RequestMethod::POST)]
-    public function info(RequestContext $context): Contract\Response
+    #[Get('/')]
+    public function handleIndex(): Contract\Response
     {
+        return Response::withJson([
+            'message' => 'Hello, World! Send a POST request to /info to get more info.',
+            'ts' => microtime(true) - ELEPHOX_START,
+        ]);
+    }
+
+    #[Post('info')]
+    public function info(RequestContext $context, UserRepository $userRepository): Contract\Response
+    {
+        try {
+            $json = $context->getRequest()->getJson();
+        } catch (JsonException $e) {
+            throw new RuntimeException('Invalid JSON body.', previous: $e);
+        }
+
+        $username = $json['username'];
+        $user = $userRepository->findBy('username', $username);
+        if ($user === null) {
+            return Response::withJson([
+                'message' => 'User not found',
+                'ts' => microtime(true) - ELEPHOX_START,
+            ]);
+        }
+
         return Response::withJson([
             'message' => "You successfully POSTed! Next, try to comment out the 'catchAll' handler and see your exception handler at work.",
             'ts' => microtime(true) - ELEPHOX_START,
         ]);
     }
 
-    #[RequestHandler('{anything}')]
-    public function catchAll(RequestContext $context): Contract\Response
+    #[Any('{anything}')]
+    public function catchAll(RequestContext $context, string $anything): Contract\Response
     {
         return Response::withJson([
-            'message' => "You sent a request to an invalid endpoint: {$context->getRequest()->getUrl()}. Perhaps your request method ({$context->getRequest()->getMethod()->getValue()}) was invalid?",
+            'message' => "You sent a request to an invalid endpoint: $anything Perhaps your request method ({$context->getRequest()->getMethod()->getValue()}) was invalid?",
             'ts' => microtime(true) - ELEPHOX_START,
         ]);
     }
@@ -51,38 +88,9 @@ class App
     }
 
     #[ExceptionHandler]
-    public function globalExceptionHandler(ExceptionContext $context): void
+    public function globalExceptionHandler(ExceptionContext $context, WhoopsRunner $whoops): void
     {
-        headers_sent() || header('Content-Type: text/html');
-
-        echo <<<TEXT
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Elephox Exception</title>
-</head>
-<body>
-    <h1>Oops!</h1>
-    <p>
-        An error occurred while processing your request.
-    </p>
-    <p>
-        <strong>Error:</strong> {$context->getException()->getMessage()}
-    </p>
-    <p>
-        <strong>File:</strong> {$context->getException()->getFile()}:{$context->getException()->getLine()}
-    </p>
-    <p>
-        <strong>Trace:</strong>
-    </p>
-    <pre>
-{$context->getException()->getTraceAsString()}
-    </pre>
-</body>
-</html>
-TEXT;
+        $whoops->pushHandler(new PrettyPageHandler);
+        $whoops->handleException($context->getException());
     }
 }

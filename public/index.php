@@ -1,8 +1,13 @@
 <?php
 declare(strict_types=1);
 
+use App\App;
+use Elephox\Core\Core;
+
 define("ELEPHOX_START", microtime(true));
 
 require_once dirname(__DIR__) . "/vendor/autoload.php";
 
-Elephox\Core\Core::entrypoint();
+Core::entrypoint(dirname(__DIR__));
+Core::setApp(App::class);
+Core::handle();

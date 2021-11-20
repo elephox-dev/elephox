@@ -6,7 +6,9 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.1",
-        "elephox/framework": "0.x-dev"
+        "ext-mysqli": "*",
+        "elephox/framework": "0.x-dev",
+        "filp/whoops": "^2.14"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
@@ -17,6 +19,12 @@
             "App\\": "src/"
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../framework"
+        }
+    ],
     "autoload-dev": {
         "psr-4": {
             "App\\": "tests/"
