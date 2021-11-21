@@ -51,12 +51,7 @@ class App implements AppContract
     #[Post('info')]
     public function info(RequestContext $context, UserRepository $userRepository): Contract\Response
     {
-        try {
-            $json = $context->getRequest()->getJson();
-        } catch (JsonException $e) {
-            throw new RuntimeException('Invalid JSON body.', previous: $e);
-        }
-
+        $json = $context->getRequest()->getJson();
         $username = $json['username'];
         $user = $userRepository->findBy('username', $username);
         if ($user === null) {
