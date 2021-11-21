@@ -35,8 +35,8 @@ class App implements AppContract
             return new MysqlStorage($connection);
         });
 
-        $container->register(UserRepository::class, UserRepository::class);
-        $container->register(WhoopsRunner::class, WhoopsRunner::class);
+        $container->register(UserRepository::class);
+        $container->register(WhoopsRunner::class);
     }
 
     #[Get('/')]
