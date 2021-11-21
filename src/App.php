@@ -72,7 +72,7 @@ class App implements AppContract
         ]);
     }
 
-    #[Any('{anything}')]
+    #[Any('(?<anything>.*)')]
     public function catchAll(RequestContext $context, string $anything): Contract\Response
     {
         return Response::withJson([
