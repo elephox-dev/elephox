@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Models\User;
 use App\Repositories\UserRepository;
 use Elephox\Core\Context\Contract\CommandLineContext;
 use Elephox\Core\Context\Contract\ExceptionContext;
@@ -19,8 +20,6 @@ use Elephox\DI\Contract\Container;
 use Elephox\Http\Contract;
 use Elephox\Http\Response;
 use Elephox\Http\Url;
-use JsonException;
-use RuntimeException;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run as WhoopsRunner;
 
@@ -48,11 +47,19 @@ class App implements AppContract
         ]);
     }
 
-    #[Post('info')]
-    public function info(RequestContext $context, UserRepository $userRepository): Contract\Response
+    #[Post('login')]
+    public function login(RequestContext $context, UserRepository $userRepository): Contract\Response
     {
         $json = $context->getRequest()->getJson();
         $username = $json['username'];
+        if (!$username) {
+            return Response::withJson([
+                'message' => 'Username is required.',
+                'ts' => microtime(true) - ELEPHOX_START,
+            ]);
+        }
+
+        /** @var \App\Models\User|null $user */
         $user = $userRepository->findBy('username', $username);
         if ($user === null) {
             return Response::withJson([
@@ -61,6 +68,66 @@ class App implements AppContract
             ]);
         }
 
+        if (!array_key_exists('password', $json) || !$user->verifyPassword($json['password'])) {
+            return Response::withJson([
+                'message' => 'Invalid password',
+                'ts' => microtime(true) - ELEPHOX_START,
+            ]);
+        }
+
+        return Response::withJson([
+            'message' => "Welcome back, {$user->getUsername()}!",
+            'ts' => microtime(true) - ELEPHOX_START,
+        ]);
+    }
+
+    #[Post('register')]
+    public function register(RequestContext $context, UserRepository $userRepository): Contract\Response
+    {
+        $json = $context->getRequest()->getJson();
+        $username = $json['username'];
+        if (!$username) {
+            return Response::withJson([
+                'message' => 'Username is required.',
+                'ts' => microtime(true) - ELEPHOX_START,
+            ]);
+        }
+
+        /** @var \App\Models\User|null $user */
+        $user = $userRepository->findBy('username', $username);
+        if ($user !== null) {
+            return Response::withJson([
+                'message' => 'Username already exists',
+                'ts' => microtime(true) - ELEPHOX_START,
+            ]);
+        }
+
+        if (!array_key_exists('password', $json)) {
+            return Response::withJson([
+                'message' => 'Password is required.',
+                'ts' => microtime(true) - ELEPHOX_START,
+            ]);
+        }
+
+        if (!array_key_exists('email', $json)) {
+            return Response::withJson([
+                'message' => 'Email is required.',
+                'ts' => microtime(true) - ELEPHOX_START,
+            ]);
+        }
+
+        $user = User::from($username, $json['password'], $json['email']);
+        $userRepository->add($user);
+
+        return Response::withJson([
+            'message' => "Successfully registered, {$user->getUsername()}!",
+            'ts' => microtime(true) - ELEPHOX_START,
+        ]);
+    }
+
+    #[Post('info')]
+    public function info(): Contract\Response
+    {
         return Response::withJson([
             'message' => "You successfully POSTed! Next, try to comment out the 'catchAll' handler and see your exception handler at work.",
             'ts' => microtime(true) - ELEPHOX_START,

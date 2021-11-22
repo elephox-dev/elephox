@@ -7,11 +7,13 @@ use App\Models\User;
 use Elephox\Database\AbstractRepository;
 use Elephox\Database\Contract\Storage;
 use Elephox\DI\Contract\Container;
-use JetBrains\PhpStorm\Pure;
 
+/**
+ * @extends AbstractRepository<User>
+ */
 class UserRepository extends AbstractRepository
 {
-    #[Pure] public function __construct(Storage $storage, Container $container)
+    public function __construct(Storage $storage, Container $container)
     {
         parent::__construct(User::class, $storage, $container);
     }
