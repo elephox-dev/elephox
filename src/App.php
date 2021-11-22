@@ -21,6 +21,7 @@ use Elephox\DI\Contract\Container;
 use Elephox\Http\Contract;
 use Elephox\Http\Response;
 use Elephox\Http\Url;
+use mysqli;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run as WhoopsRunner;
 
@@ -28,14 +29,20 @@ class App implements AppContract
 {
 	public function __construct(Container $container)
 	{
-		Dotenv::createImmutable(dirname(__DIR__))->load();
+		Dotenv::createImmutable(dirname(__DIR__), ['.env.local', '.env'])->load();
 
 		$container->register(Storage::class, static function () {
 			$dsn = Url::fromString($_ENV['DB_DSN']);
-			$connection = mysqli_connect($dsn->getHost(), $dsn->getUsername(), $dsn->getPassword(), trim($dsn->getPath(), '/'));
+			$connection = new mysqli(
+				$dsn->getHost(),
+				$dsn->getUsername(),
+				$dsn->getPassword(),
+				trim($dsn->getPath(), '/'),
+				$dsn->getPort()
+			);
 
 			return new MysqlStorage($connection);
-		});
+		}, aliases: MysqlStorage::class);
 
 		$container->register(UserRepository::class);
 		$container->register(WhoopsRunner::class);
@@ -88,6 +95,13 @@ class App implements AppContract
 	public function register(RequestContext $context, UserRepository $userRepository): Contract\Response
 	{
 		$json = $context->getRequest()->getJson();
+		if (!array_key_exists('username', $json)) {
+			return Response::withJson([
+				'message' => 'Username is required.',
+				'ts' => microtime(true) - ELEPHOX_START,
+			]);
+		}
+
 		$username = $json['username'];
 		if (!$username) {
 			return Response::withJson([
@@ -138,10 +152,18 @@ class App implements AppContract
 		]);
 	}
 
-	#[CommandHandler("/info\s?(?<args>.*)/")]
+	#[CommandHandler("/info/")]
 	public function infoCommand(): void
 	{
-		echo "Your app runs with the Elephox Framework version " . ELEPHOX_VERSION;
+		echo "Your app runs with the Elephox Framework version " . ELEPHOX_VERSION . PHP_EOL;
+	}
+
+	#[CommandHandler("/setup\-db/")]
+	public function setupDbCommand(MysqlStorage $storage): void
+	{
+		$initial = require dirname(__DIR__). '/database/Transforms/20211122_Initial.php';
+
+		$storage->getConnection()->query($initial);
 	}
 
 	#[CommandHandler]
