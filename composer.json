@@ -1,5 +1,5 @@
 {
-    "name": "elephox-dev/elephox",
+    "name": "elephox/elephox",
     "description": "A new Elephox application.",
     "type": "project",
     "minimum-stability": "dev",
