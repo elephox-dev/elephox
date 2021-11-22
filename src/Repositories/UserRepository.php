@@ -13,8 +13,8 @@ use Elephox\DI\Contract\Container;
  */
 class UserRepository extends AbstractRepository
 {
-    public function __construct(Storage $storage, Container $container)
-    {
-        parent::__construct(User::class, $storage, $container);
-    }
+	public function __construct(Storage $storage, Container $container)
+	{
+		parent::__construct(User::class, $storage, $container);
+	}
 }
