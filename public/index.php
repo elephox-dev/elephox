@@ -8,6 +8,6 @@ define("ELEPHOX_START", microtime(true));
 
 require_once dirname(__DIR__) . "/vendor/autoload.php";
 
-Core::entrypoint(dirname(__DIR__));
+Core::entrypoint();
 Core::setApp(App::class);
 Core::handle();
