@@ -21,15 +21,15 @@
             "App\\Database\\": "database/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\": "tests/"
+        }
+    },
     "repositories": [
         {
             "type": "path",
             "url": "../framework"
         }
-    ],
-    "autoload-dev": {
-        "psr-4": {
-            "App\\": "tests/"
-        }
-    }
+    ]
 }
