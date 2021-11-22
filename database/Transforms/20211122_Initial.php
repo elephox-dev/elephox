@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Database\Transforms;
+namespace Database\Transforms;
 
 return <<<SQL
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
