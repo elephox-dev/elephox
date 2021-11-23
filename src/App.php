@@ -5,7 +5,7 @@ namespace App;
 
 use App\Models\User;
 use App\Repositories\UserRepository;
-use Dotenv\Dotenv;
+use Elephox\Collection\ArrayMap;
 use Elephox\Core\Context\Contract\CommandLineContext;
 use Elephox\Core\Context\Contract\ExceptionContext;
 use Elephox\Core\Context\Contract\RequestContext;
@@ -32,27 +32,31 @@ class App implements AppContract
 		registerAll as private registerAllTrait;
 	}
 
-	public readonly array $classes = [
+	public array $classes = [
 		UserRepository::class,
-		WhoopsRunner::class
+		WhoopsRunner::class,
+		MysqlStorage::class
+	];
+
+	public array $aliases = [
+		Storage::class => MysqlStorage::class,
 	];
 
 	public function registerAll(Container $container): void
 	{
 		$this->registerAllTrait($container);
 
-		$container->singleton(Storage::class, static function () {
-			$dsn = Url::fromString($_ENV['DB_DSN']);
-			$connection = new mysqli(
-				$dsn->getHost(),
-				$dsn->getUsername(),
-				$dsn->getPassword(),
-				trim($dsn->getPath(), '/'),
-				$dsn->getPort()
-			);
+		$container->singleton(mysqli::class, static function (Container $c) {
+			$args = ArrayMap::fromIterable(Url::fromString($_ENV['DB_DSN'])->asArray())
+				->mapKeys(fn (string $key) => match ($key) {
+					'host' => 'hostname',
+					'path' => 'database',
+					default => $key
+				})
+				->asArray();
 
-			return new MysqlStorage($connection);
-		}, MysqlStorage::class);
+			return $c->instantiate(mysqli::class, $args);
+		});
 	}
 
 	#[Get('/')]
@@ -68,14 +72,14 @@ class App implements AppContract
 	public function login(RequestContext $context, UserRepository $userRepository): Contract\Response
 	{
 		$json = $context->getRequest()->getJson();
-		$username = $json['username'];
-		if (!$username) {
+		if (!array_key_exists('username', $json)) {
 			return Response::withJson([
 				'message' => 'Username is required.',
 				'ts' => microtime(true) - ELEPHOX_START,
 			]);
 		}
 
+		$username = $json['username'];
 		/** @var User|null $user */
 		$user = $userRepository->findBy('username', $username);
 		if ($user === null) {
@@ -110,13 +114,6 @@ class App implements AppContract
 		}
 
 		$username = $json['username'];
-		if (!$username) {
-			return Response::withJson([
-				'message' => 'Username is required.',
-				'ts' => microtime(true) - ELEPHOX_START,
-			]);
-		}
-
 		/** @var User|null $user */
 		$user = $userRepository->findBy('username', $username);
 		if ($user !== null) {
