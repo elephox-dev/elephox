@@ -15,6 +15,7 @@ use Elephox\Core\Handler\Attribute\ExceptionHandler;
 use Elephox\Core\Handler\Attribute\Http\Any;
 use Elephox\Core\Handler\Attribute\Http\Get;
 use Elephox\Core\Handler\Attribute\Http\Post;
+use Elephox\Core\Registrar;
 use Elephox\Database\Contract\Storage;
 use Elephox\Database\MysqlStorage;
 use Elephox\DI\Contract\Container;
@@ -27,11 +28,20 @@ use Whoops\Run as WhoopsRunner;
 
 class App implements AppContract
 {
-	public function __construct(Container $container)
-	{
-		Dotenv::createImmutable(dirname(__DIR__), ['.env.local', '.env'])->load();
+	use Registrar {
+		registerAll as private registerAllTrait;
+	}
 
-		$container->register(Storage::class, static function () {
+	public readonly array $classes = [
+		UserRepository::class,
+		WhoopsRunner::class
+	];
+
+	public function registerAll(Container $container): void
+	{
+		$this->registerAllTrait($container);
+
+		$container->singleton(Storage::class, static function () {
 			$dsn = Url::fromString($_ENV['DB_DSN']);
 			$connection = new mysqli(
 				$dsn->getHost(),
@@ -42,10 +52,7 @@ class App implements AppContract
 			);
 
 			return new MysqlStorage($connection);
-		}, aliases: MysqlStorage::class);
-
-		$container->register(UserRepository::class);
-		$container->register(WhoopsRunner::class);
+		}, MysqlStorage::class);
 	}
 
 	#[Get('/')]
