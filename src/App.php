@@ -186,7 +186,13 @@ class App implements AppContract
 	{
 		// handle command line exceptions
 		if ($commandLineContext !== null) {
-			echo PHP_EOL . "Command not found: " . $commandLineContext->getCommand() . PHP_EOL;
+			$message = match ($commandLineContext->getCommand()) {
+				'setup-db' => "An error occurred while setting up the db: " . $context->getException()->getMessage(),
+				'info' => "An error occurred while running the info command: " . $context->getException()->getMessage(),
+				default => "Command not found: " . $commandLineContext->getCommand(),
+			};
+
+			echo $message . PHP_EOL;
 
 			exit(1);
 		}
