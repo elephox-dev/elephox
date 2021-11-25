@@ -22,6 +22,9 @@ use Elephox\DI\Contract\Container;
 use Elephox\Http\Contract;
 use Elephox\Http\Response;
 use Elephox\Http\Url;
+use Elephox\Logging\ConsoleSink;
+use Elephox\Logging\Contract\Sink;
+use Elephox\Logging\GenericSinkLogger;
 use mysqli;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run as WhoopsRunner;
@@ -35,11 +38,14 @@ class App implements AppContract
 	public array $classes = [
 		UserRepository::class,
 		WhoopsRunner::class,
-		MysqlStorage::class
+		MysqlStorage::class,
+		ConsoleSink::class,
+		GenericSinkLogger::class
 	];
 
 	public array $aliases = [
 		Storage::class => MysqlStorage::class,
+		Sink::class => ConsoleSink::class,
 	];
 
 	public function registerAll(Container $container): void
@@ -157,9 +163,9 @@ class App implements AppContract
 	}
 
 	#[CommandHandler("/info/")]
-	public function infoCommand(): void
+	public function infoCommand(GenericSinkLogger $logger): void
 	{
-		echo "Your app runs with the Elephox Framework version " . ELEPHOX_VERSION . PHP_EOL;
+		$logger->info("Your app runs with the Elephox Framework version " . ELEPHOX_VERSION);
 	}
 
 	#[CommandHandler("/setup\-db/")]
@@ -171,15 +177,15 @@ class App implements AppContract
 	}
 
 	#[CommandHandler]
-	public function commandLineHandler(CommandLineContext $context): void
+	public function commandLineHandler(CommandLineContext $context, GenericSinkLogger $logger): void
 	{
-		echo "You successfully invoked your Elephox app from command line!" . PHP_EOL;
-		echo "\tCommand: " . $context->getCommand() . PHP_EOL;
-		echo "Try running it with the 'info' command" . PHP_EOL;
+		$logger->info("You successfully invoked your Elephox app from command line!");
+		$logger->info("\tCommand: " . $context->getCommand());
+		$logger->info("Try running it with the 'info' command");
 	}
 
 	#[ExceptionHandler]
-	public function globalExceptionHandler(ExceptionContext $context, ?CommandLineContext $commandLineContext, WhoopsRunner $whoops): void
+	public function globalExceptionHandler(ExceptionContext $context, ?CommandLineContext $commandLineContext, GenericSinkLogger $logger, WhoopsRunner $whoops): void
 	{
 		// handle command line exceptions
 		if ($commandLineContext !== null) {
@@ -189,7 +195,7 @@ class App implements AppContract
 				default => "Command not found: " . $commandLineContext->getCommand(),
 			};
 
-			echo $message . PHP_EOL;
+			$logger->error($message);
 
 			exit(1);
 		}
