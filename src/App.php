@@ -192,6 +192,7 @@ class App implements AppContract
 			$message = match ($commandLineContext->getCommand()) {
 				'setup-db' => "An error occurred while setting up the db: " . $context->getException()->getMessage(),
 				'info' => "An error occurred while running the info command: " . $context->getException()->getMessage(),
+				'test' => "An error occurred while running the test command: " . $context->getException()->getMessage(),
 				default => "Command not found: " . $commandLineContext->getCommand(),
 			};
 
