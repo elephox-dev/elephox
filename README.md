@@ -1,6 +1,10 @@
-# Elephox
+<p align=center>
+  <img src="https://raw.githubusercontent.com/elephox-dev/.github/main/profile/logo.svg" alt="Elephox Logo" height=100>
+</p>
 
-> Start building your application with Elephox.
+<p align=center>
+  Start building your application with Elephox.
+</p>
 
 ## Development
 
