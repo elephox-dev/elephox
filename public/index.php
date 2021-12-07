@@ -16,7 +16,7 @@ require_once dirname(__DIR__) . "/vendor/autoload.php";
 
 Dotenv::createImmutable(dirname(__DIR__), ['.env.local', '.env'])->load();
 
-Core::entrypoint();
-Core::setApp(App::class);
-Core::loadHandlersInNamespace('App\\CLI');
-Core::handle();
+$core = Core::instance();
+$core->registerApp(App::class);
+$core->getHandlerContainer()->loadFromNamespace('App\\CLI');
+$core->handleGlobal();

@@ -21,6 +21,9 @@ use Elephox\Database\MysqlStorage;
 use Elephox\DI\Contract\Container;
 use Elephox\Http\Contract;
 use Elephox\Http\Response;
+use Elephox\Http\ResponseCode;
+use Elephox\Http\ResponseHeaderMap;
+use Elephox\Http\StringStream;
 use Elephox\Http\Url;
 use Elephox\Logging\ConsoleSink;
 use Elephox\Logging\Contract\Sink;
@@ -68,10 +71,12 @@ class App implements AppContract
 	#[Get('/')]
 	public function handleIndex(): Contract\Response
 	{
-		return Response::withJson([
-			'message' => 'Hello, World! Send a POST request to /register to create an account or to /login to log in.',
-			'ts' => microtime(true) - ELEPHOX_START,
-		]);
+		return new Response("1.1", new ResponseHeaderMap(), new StringStream("Hello, world!"), ResponseCode::OK);
+
+//		return Response::withJson([
+//			'message' => 'Hello, World! Send a POST request to /register to create an account or to /login to log in.',
+//			'ts' => microtime(true) - ELEPHOX_START,
+//		]);
 	}
 
 	#[Post('login')]
