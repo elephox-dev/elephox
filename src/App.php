@@ -15,7 +15,7 @@ use Elephox\Core\Registrar;
 use Elephox\Http\Contract;
 use Elephox\Http\Response;
 use Elephox\Http\ResponseCode;
-use Elephox\Http\StringStream;
+use Elephox\Stream\StringStream;
 use Elephox\Logging\ConsoleSink;
 use Elephox\Logging\Contract\Sink;
 use Elephox\Logging\GenericSinkLogger;
@@ -37,13 +37,16 @@ class App implements AppContract
 	];
 
 	#[Get('/')]
+	#[ResponseStreamModifier]
+	#[ResponseStreamModifier]
+	#[ResponseStreamModifier]
 	public function handleIndex(): Contract\Response
 	{
 		return new Response(body: new StringStream("Hello world!"));
 	}
 
 	#[Any('(?<anything>.*)')]
-	public function catchAll(RequestContext $context, string $anything): Contract\Response
+	public function catchAll(string $anything): Contract\Response
 	{
 		return new Response(ResponseCode::NotFound, body: new StringStream("Requested resource not found: $anything"));
 	}
