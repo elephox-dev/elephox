@@ -8,6 +8,6 @@ define("ELEPHOX_START", microtime(true));
 
 require_once dirname(__DIR__) . "/vendor/autoload.php";
 
-$core = Core::instance();
+$core = Core::create();
 $core->registerApp(App::class);
 $core->handleGlobal();

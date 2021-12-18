@@ -5,7 +5,6 @@ namespace App;
 
 use Elephox\Core\Context\Contract\CommandLineContext;
 use Elephox\Core\Context\Contract\ExceptionContext;
-use Elephox\Core\Context\Contract\RequestContext;
 use Elephox\Core\Contract\App as AppContract;
 use Elephox\Core\Handler\Attribute\CommandHandler;
 use Elephox\Core\Handler\Attribute\ExceptionHandler;
@@ -37,9 +36,6 @@ class App implements AppContract
 	];
 
 	#[Get('/')]
-	#[ResponseStreamModifier]
-	#[ResponseStreamModifier]
-	#[ResponseStreamModifier]
 	public function handleIndex(): Contract\Response
 	{
 		return new Response(body: new StringStream("Hello world!"));
