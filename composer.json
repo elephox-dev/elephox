@@ -6,7 +6,6 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.1",
-        "ext-mysqli": "*",
         "elephox/framework": "1.x-dev",
         "filp/whoops": "^2.14",
         "jetbrains/phpstorm-attributes": "^1.0"
