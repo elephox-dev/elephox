@@ -14,10 +14,11 @@ use Elephox\Core\Registrar;
 use Elephox\Http\Contract;
 use Elephox\Http\Response;
 use Elephox\Http\ResponseCode;
-use Elephox\Stream\StringStream;
 use Elephox\Logging\ConsoleSink;
 use Elephox\Logging\Contract\Sink;
 use Elephox\Logging\GenericSinkLogger;
+use Elephox\Stream\StringStream;
+use RuntimeException;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run as WhoopsRunner;
 
@@ -36,15 +37,27 @@ class App implements AppContract
 	];
 
 	#[Get('/')]
-	public function handleIndex(): Contract\Response
+	public function handleIndex(): Contract\Message
 	{
-		return new Response(body: new StringStream("Hello world!"));
+		return Response::build()
+			->responseCode(ResponseCode::OK)
+			->body(new StringStream('Hello, world!'))
+			->get();
+	}
+
+	#[Get('/throw')]
+	public function testThrow(): never
+	{
+		throw new RuntimeException('Test exception');
 	}
 
 	#[Any('(?<anything>.*)')]
-	public function catchAll(string $anything): Contract\Response
+	public function catchAll(string $anything): Contract\Message
 	{
-		return new Response(ResponseCode::NotFound, body: new StringStream("Requested resource not found: $anything"));
+		return Response::build()
+			->responseCode(ResponseCode::NotFound)
+			->body(new StringStream("Requested resource not found: $anything"))
+			->get();
 	}
 
 	#[CommandHandler]
