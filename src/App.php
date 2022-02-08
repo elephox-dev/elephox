@@ -36,7 +36,7 @@ class App implements AppContract
 		Sink::class => ConsoleSink::class,
 	];
 
-	#[Get('/')]
+	#[Get]
 	public function handleIndex(): Contract\Message
 	{
 		return Response::build()
@@ -45,7 +45,7 @@ class App implements AppContract
 			->get();
 	}
 
-	#[Get('/throw')]
+	#[Get('throw')]
 	public function testThrow(): never
 	{
 		throw new RuntimeException('Test exception');
