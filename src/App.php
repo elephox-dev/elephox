@@ -11,7 +11,6 @@ use Elephox\Core\Handler\Attribute\ExceptionHandler;
 use Elephox\Core\Handler\Attribute\Http\Any;
 use Elephox\Core\Handler\Attribute\Http\Get;
 use Elephox\Core\Registrar;
-use Elephox\Http\Contract;
 use Elephox\Http\Response;
 use Elephox\Http\ResponseCode;
 use Elephox\Logging\ConsoleSink;
@@ -37,11 +36,11 @@ class App implements AppContract
 	];
 
 	#[Get]
-	public function handleIndex(): Contract\Message
+	public function handleIndex(): Response
 	{
 		return Response::build()
 			->responseCode(ResponseCode::OK)
-			->body(new StringStream('Hello, world!'))
+			->body(new StringStream('Hello world!'))
 			->get();
 	}
 
@@ -52,7 +51,7 @@ class App implements AppContract
 	}
 
 	#[Any('(?<anything>.*)')]
-	public function catchAll(string $anything): Contract\Message
+	public function catchAll(string $anything): Response
 	{
 		return Response::build()
 			->responseCode(ResponseCode::NotFound)
@@ -61,10 +60,12 @@ class App implements AppContract
 	}
 
 	#[CommandHandler]
-	public function commandLineHandler(CommandLineContext $context, GenericSinkLogger $logger): void
+	public function commandLineHandler(CommandLineContext $context, GenericSinkLogger $logger): int
 	{
 		$logger->info("You successfully invoked your Elephox app from command line!");
 		$logger->info("\tCommand: " . $context->getCommand());
+
+		return 0;
 	}
 
 	#[ExceptionHandler]
