@@ -5,12 +5,15 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use App\ClassRegistrar;
 use Elephox\Core\Core;
-
-define("ELEPHOX_START", microtime(true));
+use Elephox\Core\SimpleWebApp;
 
 $core = Core::create();
-
 $core->registerApp(ClassRegistrar::class);
 $core->registerGlobal();
+$builder = SimpleWebApp::createBuilder();
 
-return $core;
+if (!$builder->hasChanged()) {
+	return $builder->getCached();
+}
+
+return $builder->build();

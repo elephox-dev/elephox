@@ -1,6 +1,13 @@
 <?php
 declare(strict_types=1);
 
-/** @var \Elephox\Core\Contract\Core $core */
-$core = require dirname(__DIR__) . '/bootstrap.php';
-$core->handleGlobal();
+$app = include '../buildApp.php';
+
+// runtime configuration
+if ($app->environment->isDevelopment()) {
+	$app->useDeveloperExceptionPages();
+} else {
+	$app->useHsts();
+}
+
+$app->handleGlobal(); // handle global context
