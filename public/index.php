@@ -1,13 +1,21 @@
 <?php
 declare(strict_types=1);
 
-$app = include '../buildApp.php';
+require_once dirname(__DIR__) . '/bootstrap.php';
 
-// runtime configuration
+use Elephox\Configuration\Json\JsonFileConfigurationSource;
+use Elephox\Host\WebApplication;
+
+$builder = WebApplication::createBuilder();
+$builder->configuration->add(new JsonFileConfigurationSource('config.json'));
+$builder->configuration->add(new JsonFileConfigurationSource('config.' . $builder->environment->getEnvironmentName() . '.json', true));
+$builder->configuration->add(new JsonFileConfigurationSource('config.local.json', true));
+$app = $builder->build();
+
 if ($app->environment->isDevelopment()) {
-	$app->useDeveloperExceptionPages();
-} else {
-	$app->useHsts();
+	$app->services->addWhoops();
 }
 
-$app->handleGlobal(); // handle global context
+$app->services->addDoctrine();
+
+$app->run();

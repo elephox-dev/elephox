@@ -1,0 +1,14 @@
+{
+    "doctrine": {
+        "connection": {
+            "driver": "pdo_sqlite",
+            "path": "data/database.sqlite"
+        },
+        "metadata": {
+            "driver": "annotation",
+            "paths": [
+                "src/Entity"
+            ]
+        }
+    }
+}
