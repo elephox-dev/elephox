@@ -16,8 +16,8 @@ $builder->configuration->add(new JsonFileConfigurationSource('config.' . $builde
 $builder->configuration->add(new JsonFileConfigurationSource('config.local.json', true));
 $app = $builder->build();
 $app->services->addSingleton(WhoopsRunInterface::class, WhoopsRun::class, implementationFactory: function () {
-    $whoops = new WhoopsRun();
-    $whoops->pushHandler(new PlainTextHandler());
-    return $whoops;
+	$whoops = new WhoopsRun();
+	$whoops->pushHandler(new PlainTextHandler());
+	return $whoops;
 });
 $app->handle();
