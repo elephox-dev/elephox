@@ -7,10 +7,7 @@ use Elephox\Web\Middleware\DefaultExceptionHandler;
 use Elephox\Web\WebApplication;
 
 $builder = WebApplication::createBuilder();
-
-$builder->services->addWhoops();
-
-$builder->pipeline->addRouting();
-$builder->pipeline->push(new DefaultExceptionHandler());
-
+$builder->setRequestRouterEndpoint();
+$builder->addWhoops();
+$builder->addDoctrine();
 $builder->build()->run();
