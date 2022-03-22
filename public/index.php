@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/bootstrap.php';
 
-use Elephox\Host\Middleware\DefaultExceptionHandler;
-use Elephox\Host\WebApplication;
+use Elephox\Web\Middleware\DefaultExceptionHandler;
+use Elephox\Web\WebApplication;
 
 $builder = WebApplication::createBuilder();
 
