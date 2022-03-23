@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Routes;
 
 use Elephox\Core\Handler\Attribute\Http\Any;
 use Elephox\Core\Handler\Attribute\Http\Get;

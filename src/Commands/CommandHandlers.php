@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Commands;
 
 use Elephox\Core\Context\Contract\CommandLineContext;
 use Elephox\Core\Handler\Attribute\CommandHandler;
