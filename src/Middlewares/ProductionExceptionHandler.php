@@ -13,6 +13,7 @@ class ProductionExceptionHandler implements WebMiddleware
 {
 	public function handle(Request $request, Closure $next): ResponseBuilder
 	{
+		/** @var ResponseBuilder $response */
 		$response = $next($request);
 
 		if ($exception = $response->getException()) {

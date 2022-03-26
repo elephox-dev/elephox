@@ -1,29 +1,28 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Routes;
 
-use Elephox\Core\Handler\Attribute\Http\Any;
-use Elephox\Core\Handler\Attribute\Http\Get;
-use Elephox\Http\Contract\Response as ResponseContract;
+use Elephox\Http\Contract\ResponseBuilder;
 use Elephox\Http\Response;
 use Elephox\Http\ResponseCode;
-use Elephox\Stream\StringStream;
+use Elephox\Web\Routing\Attribute\Controller;
+use Elephox\Web\Routing\Attribute\Http\Get;
 use RuntimeException;
 
 #[Controller("/")]
 class RequestHandlers
 {
 	#[Get]
-	public function index(): ResponseContract
+	public function index(): ResponseBuilder
 	{
 		return Response::build()
 			->responseCode(ResponseCode::OK)
-			->htmlBody('<h1>Hello world!</h1>')
-			->get();
+			->htmlBody('<h1>Hello world!</h1>');
 	}
 
-	#[Get]
-	public function throw(): never
+	#[Get("/error")]
+	public function throw(): ResponseBuilder
 	{
 		throw new RuntimeException('Test exception');
 	}
