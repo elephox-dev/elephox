@@ -11,7 +11,7 @@ use Elephox\Web\Routing\Attribute\Http\Get;
 use RuntimeException;
 
 #[Controller("/")]
-class RequestHandlers
+class WebController
 {
 	#[Get]
 	public function index(): ResponseBuilder
@@ -21,7 +21,7 @@ class RequestHandlers
 			->htmlBody('<h1>Hello world!</h1>');
 	}
 
-	#[Get("/error")]
+	#[Get]
 	public function throw(): ResponseBuilder
 	{
 		throw new RuntimeException('Test exception');
