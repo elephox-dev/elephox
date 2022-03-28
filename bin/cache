@@ -6,4 +6,4 @@ declare(strict_types=1);
 $app = require dirname(__DIR__) . '/buildApp.php';
 $serialized = serialize($app);
 
-file_put_contents('cache/web.phpo', $serialized);
+file_put_contents(dirname(__DIR__) . '/cache/web.phpo', $serialized);
