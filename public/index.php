@@ -3,23 +3,8 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/bootstrap.php';
 
-use App\Middlewares\FileExtensionToContentType;
-use App\Middlewares\ProductionExceptionHandler;
-use Elephox\Web\Routing\RequestRouter;
-use Elephox\Web\WebApplication;
+$serialized = file_get_contents('cache/web.phpo');
+/** @var \Elephox\Web\WebApplication $app */
+$app = unserialize($serialized);
 
-$builder = WebApplication::createBuilder();
-
-if ($builder->environment->isDevelopment()) {
-	$builder->addWhoops();
-} else {
-	$builder->pipeline->push(new ProductionExceptionHandler());
-}
-$builder->pipeline->push(new FileExtensionToContentType());
-$builder->addDoctrine();
-
-$builder->setRequestRouterEndpoint();
-$router = $builder->services->requireService(RequestRouter::class);
-$router->loadFromNamespace('App\\Routes');
-
-$builder->build()->run();
+$app->run();
