@@ -1,7 +1,8 @@
 <?php
 declare(strict_types=1);
 
-require_once dirname(__DIR__) . '/bootstrap.php';
+define('APP_ROOT', dirname(__DIR__));
+require_once APP_ROOT . '/vendor/autoload.php';
 
 use App\Middlewares\FileExtensionToContentType;
 use App\Middlewares\ProductionExceptionHandler;
@@ -9,7 +10,6 @@ use Elephox\Web\Routing\RequestRouter;
 use Elephox\Web\WebApplication;
 
 $builder = WebApplication::createBuilder();
-
 if ($builder->environment->isDevelopment()) {
 	$builder->addWhoops();
 } else {
