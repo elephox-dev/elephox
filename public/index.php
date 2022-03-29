@@ -3,17 +3,24 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/bootstrap.php';
 
-if (!file_exists(dirname(__DIR__) . '/cache/web.phpo')) {
-	/** @var \Elephox\Web\WebApplication $app */
-	$app = require dirname(__DIR__) . '/buildApp.php';
-	$serialized = serialize($app);
+use App\Middlewares\FileExtensionToContentType;
+use App\Middlewares\ProductionExceptionHandler;
+use Elephox\Web\Routing\RequestRouter;
+use Elephox\Web\WebApplication;
 
-	file_put_contents(dirname(__DIR__) . '/cache/web.phpo', $serialized);
+$builder = WebApplication::createBuilder();
+
+if ($builder->environment->isDevelopment()) {
+	$builder->addWhoops();
 } else {
-	$serialized = file_get_contents(dirname(__DIR__) . '/cache/web.phpo');
-
-	/** @var \Elephox\Web\WebApplication $app */
-	$app = unserialize($serialized);
+	$builder->pipeline->push(new ProductionExceptionHandler());
 }
+$builder->pipeline->push(new FileExtensionToContentType());
+$builder->addDoctrine();
 
+$builder->setRequestRouterEndpoint();
+$router = $builder->services->requireService(RequestRouter::class);
+$router->loadFromNamespace('App\\Routes');
+
+$app = $builder->build();
 $app->run();
