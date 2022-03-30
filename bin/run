@@ -2,22 +2,24 @@
 <?php
 declare(strict_types=1);
 
-use Elephox\Configuration\Json\JsonFileConfigurationSource;
-use Elephox\Host\ConsoleApplication;
+define('APP_ROOT', dirname(__DIR__));
+require_once APP_ROOT . '/vendor/autoload.php';
+
+use Elephox\Console\ConsoleApplication;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Run as WhoopsRun;
 use Whoops\RunInterface as WhoopsRunInterface;
 
-require_once dirname(__DIR__) . '/bootstrap.php';
-
 $builder = ConsoleApplication::createBuilder();
-$builder->configuration->add(new JsonFileConfigurationSource('config.json'));
-$builder->configuration->add(new JsonFileConfigurationSource('config.' . $builder->environment->getEnvironmentName() . '.json', true));
-$builder->configuration->add(new JsonFileConfigurationSource('config.local.json', true));
-$app = $builder->build();
-$app->services->addSingleton(WhoopsRunInterface::class, WhoopsRun::class, implementationFactory: function () {
-	$whoops = new WhoopsRun();
-	$whoops->pushHandler(new PlainTextHandler());
-	return $whoops;
+$builder->services->addSingleton(WhoopsRunInterface::class, WhoopsRun::class, implementationFactory: function () {
+    $whoops = new WhoopsRun();
+    $whoops->pushHandler(new PlainTextHandler());
+    return $whoops;
 });
-$app->handle();
+
+$app = $builder->build();
+try {
+    $app->handle();
+} catch (Throwable $e) {
+    $app->services->get(WhoopsRunInterface::class)->handleException($e);
+}
