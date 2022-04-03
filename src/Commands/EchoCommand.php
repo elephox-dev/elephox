@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Commands;
 
-use Elephox\Console\Command\Command;
+use Elephox\Console\Command\CommandInvocation;
 use Elephox\Console\Command\CommandTemplateBuilder;
 use Elephox\Console\Command\Contract\CommandHandler;
 use Elephox\Logging\Contract\Logger;
@@ -16,7 +16,7 @@ class EchoCommand implements CommandHandler
 	{
 	}
 
-	public function build(CommandTemplateBuilder $builder): CommandTemplateBuilder
+	public function configure(CommandTemplateBuilder $builder): CommandTemplateBuilder
 	{
 		return $builder
 			->name('echo')
@@ -24,9 +24,9 @@ class EchoCommand implements CommandHandler
 		;
 	}
 
-	public function handle(Command $command): void
+	public function handle(CommandInvocation $command): void
 	{
-		$echo = $command->getArgument('echo')->value;
+		$echo = $command->message;
 
 		$this->logger->info("You typed: $echo");
 	}

@@ -19,8 +19,7 @@ $builder->pipeline->push(new FileExtensionToContentType());
 $builder->addDoctrine();
 
 $builder->setRequestRouterEndpoint();
-$router = $builder->services->requireService(RequestRouter::class);
-$router->loadFromNamespace('App\\Routes');
+$builder->service(RequestRouter::class)->loadFromNamespace('App\\Routes');
 
 $app = $builder->build();
 $app->run();

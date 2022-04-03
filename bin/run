@@ -11,15 +11,13 @@ use Whoops\Run as WhoopsRun;
 use Whoops\RunInterface as WhoopsRunInterface;
 
 $builder = ConsoleApplication::createBuilder();
-$builder->services->addSingleton(WhoopsRunInterface::class, WhoopsRun::class, implementationFactory: function () {
-    $whoops = new WhoopsRun();
-    $whoops->pushHandler(new PlainTextHandler());
-    return $whoops;
-});
+$builder->addWhoops();
+$builder->addLogging();
+$builder->commands->loadFromNamespace("App\\Commands");
 
 $app = $builder->build();
 try {
-    $app->handle();
+	$app->run();
 } catch (Throwable $e) {
-    $app->services->get(WhoopsRunInterface::class)->handleException($e);
+	$app->services->get(WhoopsRunInterface::class)->handleException($e);
 }
