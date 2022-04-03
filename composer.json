@@ -9,12 +9,6 @@
         "elephox/framework": "self.version",
         "filp/whoops": "^2.14"
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../framework"
-        }
-    ],
     "require-dev": {
         "roave/security-advisories": "dev-latest"
     },
