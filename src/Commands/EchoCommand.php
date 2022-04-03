@@ -24,10 +24,12 @@ class EchoCommand implements CommandHandler
 		;
 	}
 
-	public function handle(CommandInvocation $command): void
+	public function handle(CommandInvocation $command): int|null
 	{
 		$echo = $command->message;
 
 		$this->logger->info("You typed: $echo");
+
+		return 0;
 	}
 }
