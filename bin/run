@@ -8,7 +8,11 @@ require_once APP_ROOT . '/vendor/autoload.php';
 use Elephox\Console\ConsoleApplicationBuilder;
 use Elephox\Support\Contract\ExceptionHandler;
 
-$builder = ConsoleApplicationBuilder::create()->addLogging()->addWhoops();
+$builder = ConsoleApplicationBuilder::create()
+	->addLogging()
+	->addWhoops()
+;
+
 $builder->commands->loadFromNamespace("App\\Commands");
 
 $app = $builder->build();
