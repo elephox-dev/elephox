@@ -6,14 +6,24 @@ define('APP_ROOT', dirname(__DIR__));
 require_once APP_ROOT . '/vendor/autoload.php';
 
 use Elephox\Console\ConsoleApplicationBuilder;
+use Elephox\DI\Contract\ServiceCollection;
 use Elephox\Support\Contract\ExceptionHandler;
+use Elephox\Web\Contract\Router;
+use Elephox\Web\Routing\RequestRouter;
 
+// Build console application
 $builder = ConsoleApplicationBuilder::create()
 	->addLogging()
 	->addWhoops()
 ;
 
+// Load app commands
 $builder->commands->loadFromNamespace("App\\Commands");
+
+// Add the request router, so we can use it in commands
+$builder->services->addSingleton(Router::class, RequestRouter::class, function (ServiceCollection $services): RequestRouter {
+	return (new RequestRouter($services))->loadFromNamespace('App\\Routes');
+});
 
 $app = $builder->build();
 try {
