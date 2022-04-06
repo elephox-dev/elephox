@@ -6,10 +6,11 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.1 <8.3",
-        "elephox/framework": "self.version",
+        "elephox/framework": "dev-develop",
         "nunomaduro/collision": "^6.2"
     },
     "require-dev": {
+        "elephox/inspector": "dev-develop",
         "roave/security-advisories": "dev-latest"
     },
     "autoload": {

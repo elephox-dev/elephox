@@ -8,7 +8,7 @@ require_once APP_ROOT . '/vendor/autoload.php';
 use Elephox\Console\ConsoleApplicationBuilder;
 use Elephox\DI\Contract\ServiceCollection;
 use Elephox\Support\Contract\ExceptionHandler;
-use Elephox\Web\Contract\Router;
+use Elephox\Web\Routing\Contract\Router;
 use Elephox\Web\Routing\RequestRouter;
 
 // Build console application
@@ -24,6 +24,9 @@ $builder->commands->loadFromNamespace("App\\Commands");
 $builder->services->addSingleton(Router::class, RequestRouter::class, function (ServiceCollection $services): RequestRouter {
 	return (new RequestRouter($services))->loadFromNamespace('App\\Routes');
 });
+
+// Load inspector commands
+$builder->commands->loadFromNamespace("Elephox\\Inspector\\Commands");
 
 $app = $builder->build();
 try {
