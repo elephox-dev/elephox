@@ -5,19 +5,15 @@ declare(strict_types=1);
 define('APP_ROOT', dirname(__DIR__));
 require_once APP_ROOT . '/vendor/autoload.php';
 
-use Elephox\Console\ConsoleApplication;
-use Whoops\Handler\PlainTextHandler;
-use Whoops\Run as WhoopsRun;
-use Whoops\RunInterface as WhoopsRunInterface;
+use Elephox\Console\ConsoleApplicationBuilder;
+use Elephox\Support\Contract\ExceptionHandler;
 
-$builder = ConsoleApplication::createBuilder();
-$builder->addWhoops();
-$builder->addLogging();
+$builder = ConsoleApplicationBuilder::create()->addLogging()->addWhoops();
 $builder->commands->loadFromNamespace("App\\Commands");
 
 $app = $builder->build();
 try {
 	$app->run();
 } catch (Throwable $e) {
-	$app->services->get(WhoopsRunInterface::class)->handleException($e);
+	$app->services->get(ExceptionHandler::class)->handleException($e);
 }

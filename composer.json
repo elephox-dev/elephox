@@ -7,8 +7,14 @@
     "require": {
         "php": "^8.1 <8.3",
         "elephox/framework": "self.version",
-        "filp/whoops": "^2.14"
+        "nunomaduro/collision": "^6.2"
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../framework"
+        }
+    ],
     "require-dev": {
         "roave/security-advisories": "dev-latest"
     },

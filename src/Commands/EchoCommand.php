@@ -16,11 +16,11 @@ class EchoCommand implements CommandHandler
 	{
 	}
 
-	public function configure(CommandTemplateBuilder $builder): CommandTemplateBuilder
+	public function configure(CommandTemplateBuilder $builder): void
 	{
-		return $builder
+		$builder
 			->name('echo')
-			->argument('message', 'A string to echo back', required: true)
+			->argument('message', 'A string to echo back')
 		;
 	}
 
