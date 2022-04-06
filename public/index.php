@@ -6,18 +6,21 @@ require_once APP_ROOT . '/vendor/autoload.php';
 
 use App\Middlewares\FileExtensionToContentType;
 use App\Middlewares\ProductionExceptionHandler;
+use Elephox\Support\Contract\ExceptionHandler;
 use Elephox\Web\Routing\RequestRouter;
-use Elephox\Web\WebApplication;
+use Elephox\Web\WebApplicationBuilder;
 
-$builder = WebApplication::createBuilder();
+$builder = WebApplicationBuilder::create();
 if ($builder->environment->isDevelopment()) {
 	$builder->addWhoops();
 } else {
-	$builder->pipeline->push(new ProductionExceptionHandler());
+	$handler = new ProductionExceptionHandler();
+	$builder->services->addSingleton(ExceptionHandler::class, implementation: $handler);
+	$builder->pipeline->exceptionHandler($handler);
 }
+
 $builder->pipeline->push(new FileExtensionToContentType());
 $builder->addDoctrine();
-
 $builder->setRequestRouterEndpoint();
 $builder->service(RequestRouter::class)->loadFromNamespace('App\\Routes');
 

@@ -6,6 +6,7 @@ namespace App\Routes;
 use Elephox\Http\Contract\ResponseBuilder;
 use Elephox\Http\Response;
 use Elephox\Http\ResponseCode;
+use Elephox\Mimey\MimeType;
 use Elephox\Web\Routing\Attribute\Controller;
 use Elephox\Web\Routing\Attribute\Http\Get;
 use RuntimeException;
@@ -18,7 +19,8 @@ class WebController
 	{
 		return Response::build()
 			->responseCode(ResponseCode::OK)
-			->htmlBody('<h1>Hello world!</h1>');
+			->fileBody(APP_ROOT . '/views/index.html', MimeType::TextHtml)
+		;
 	}
 
 	#[Get]

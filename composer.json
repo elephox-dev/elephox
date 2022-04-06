@@ -9,12 +9,6 @@
         "elephox/framework": "self.version",
         "nunomaduro/collision": "^6.2"
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../framework"
-        }
-    ],
     "require-dev": {
         "roave/security-advisories": "dev-latest"
     },
