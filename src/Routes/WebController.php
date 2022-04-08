@@ -8,6 +8,7 @@ use Elephox\Http\Response;
 use Elephox\Http\ResponseCode;
 use Elephox\Mimey\MimeType;
 use Elephox\Web\Routing\Attribute\Controller;
+use Elephox\Web\Routing\Attribute\Http\Any;
 use Elephox\Web\Routing\Attribute\Http\Get;
 use RuntimeException;
 
@@ -27,5 +28,13 @@ class WebController
 	public function throw(): ResponseBuilder
 	{
 		throw new RuntimeException('Test exception');
+	}
+
+	#[Any('regex:.*', -1)]
+	public function notFound(): ResponseBuilder
+	{
+		return Response::build()
+			->responseCode(ResponseCode::OK)
+			->fileBody(APP_ROOT . '/views/error404.html', MimeType::TextHtml);
 	}
 }
