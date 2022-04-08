@@ -1,7 +1,4 @@
 {
-    "env": {
-        "debug": true
-    },
     "doctrine": {
         "connection": {
             "driver": "pdo_sqlite",

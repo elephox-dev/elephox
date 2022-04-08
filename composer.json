@@ -17,5 +17,10 @@
         "psr-4": {
             "App\\": "src/"
         }
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "@php -r \"file_exists('config.local.json') || copy('config.local.json.example', 'config.local.json');\""
+        ]
     }
 }
