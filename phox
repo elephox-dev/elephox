@@ -1,15 +1,15 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 declare(strict_types=1);
-
-define('APP_ROOT', dirname(__DIR__));
-require_once APP_ROOT . '/vendor/autoload.php';
 
 use Elephox\Console\ConsoleApplicationBuilder;
 use Elephox\DI\Contract\ServiceCollection;
 use Elephox\Support\Contract\ExceptionHandler;
 use Elephox\Web\Routing\Contract\Router;
 use Elephox\Web\Routing\RequestRouter;
+
+require_once 'vendor/autoload.php';
+const APP_ROOT = __DIR__;
 
 // Build console application
 $builder = ConsoleApplicationBuilder::create()
