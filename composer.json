@@ -11,6 +11,7 @@
     },
     "require-dev": {
         "elephox/inspector": "dev-develop",
+        "elephox/plane": "dev-develop",
         "roave/security-advisories": "dev-latest"
     },
     "autoload": {
