@@ -2,8 +2,6 @@
     "name": "elephox/elephox",
     "description": "A new Elephox application.",
     "type": "project",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "require": {
         "php": "^8.1 <8.3",
         "elephox/framework": "dev-develop",
@@ -14,6 +12,8 @@
         "elephox/plane": "dev-develop",
         "roave/security-advisories": "dev-latest"
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "App\\": "src/"
@@ -21,7 +21,7 @@
     },
     "scripts": {
         "post-create-project-cmd": [
-            "@php -r \"file_exists('config.local.json') || copy('config.local.json.example', 'config.local.json');\""
+            "@php -r \"file_exists('.env.local') || copy('.env.local.example', '.env.local');\""
         ]
     }
 }

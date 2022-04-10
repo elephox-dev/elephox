@@ -1,8 +1,12 @@
 {
     "doctrine": {
         "connection": {
-            "driver": "pdo_sqlite",
-            "path": "data/database.sqlite"
+            "driver": "${DB_DRIVER}",
+            "host": "${DB_HOST}",
+            "port": "${DB_PORT}",
+            "user": "${DB_USER}",
+            "password": "${DB_PASSWORD}",
+            "dbname": "${DB_NAME}"
         },
         "metadata": {
             "driver": "annotation",
