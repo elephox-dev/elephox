@@ -12,7 +12,7 @@ use Elephox\Web\Routing\Attribute\Http\Any;
 use Elephox\Web\Routing\Attribute\Http\Get;
 use RuntimeException;
 
-#[Controller("/")]
+#[Controller("")]
 class WebController
 {
 	#[Get]

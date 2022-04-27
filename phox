@@ -2,6 +2,7 @@
 <?php
 declare(strict_types=1);
 
+use Elephox\Builder\Whoops\AddsWhoopsHandler;
 use Elephox\Console\ConsoleApplicationBuilder;
 use Elephox\DI\Contract\ServiceCollection;
 use Elephox\Support\Contract\ExceptionHandler;
@@ -11,11 +12,15 @@ use Elephox\Web\Routing\RequestRouter;
 require_once 'vendor/autoload.php';
 const APP_ROOT = __DIR__;
 
+// Create the custom builder
+class ConsoleBuilder extends ConsoleApplicationBuilder {
+	use AddsWhoopsHandler;
+}
+
 // Build console application
-$builder = ConsoleApplicationBuilder::create()
-	->addLogging()
-	->addWhoops()
-;
+$builder = ConsoleBuilder::create();
+$builder->addLogging();
+$builder->addWhoops();
 
 // Load app commands
 $builder->commands->loadFromNamespace("App\\Commands");

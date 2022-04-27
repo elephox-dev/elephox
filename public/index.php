@@ -6,11 +6,18 @@ require_once APP_ROOT . '/vendor/autoload.php';
 
 use App\Middlewares\FileExtensionToContentType;
 use App\Middlewares\ProductionExceptionHandler;
+use Elephox\Builder\Doctrine\AddsDoctrine;
+use Elephox\Builder\Whoops\AddsWhoopsMiddleware;
 use Elephox\Support\Contract\ExceptionHandler;
 use Elephox\Web\Routing\RequestRouter;
 use Elephox\Web\WebApplicationBuilder;
 
-$builder = WebApplicationBuilder::create();
+class Builder extends WebApplicationBuilder {
+	use AddsWhoopsMiddleware;
+	use AddsDoctrine;
+}
+
+$builder = Builder::create();
 if ($builder->environment->isDevelopment()) {
 	$builder->addWhoops();
 } else {
