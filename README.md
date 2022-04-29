@@ -9,8 +9,12 @@
 ## Development
 
 ```bash
-$ php -S localhost:8000 -t public/
+$ php phox serve
 ```
+
+## Environment
+
+Adjust your environment by editing the `.env` files.
 
 ## Contribute
 
