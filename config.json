@@ -9,7 +9,7 @@
             "dbname": "${DB_NAME}"
         },
         "metadata": {
-            "driver": "annotation",
+            "driver": "attribute",
             "paths": [
                 "src/Entity"
             ]

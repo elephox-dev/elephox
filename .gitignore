@@ -1,3 +1,4 @@
 vendor/
 *.local.json
 .env*.local
+database.sqlite

@@ -2,6 +2,7 @@
 <?php
 declare(strict_types=1);
 
+use Elephox\Builder\Doctrine\AddsDoctrine;
 use Elephox\Builder\Whoops\AddsWhoopsHandler;
 use Elephox\Console\ConsoleApplicationBuilder;
 use Elephox\DI\Contract\ServiceCollection;
@@ -15,12 +16,14 @@ const APP_ROOT = __DIR__;
 // Create the custom builder
 class ConsoleBuilder extends ConsoleApplicationBuilder {
 	use AddsWhoopsHandler;
+	use AddsDoctrine;
 }
 
 // Build console application
 $builder = ConsoleBuilder::create();
 $builder->addLogging();
 $builder->addWhoops();
+$builder->addDoctrine();
 
 // Load app commands
 $builder->commands->loadFromNamespace("App\\Commands");
@@ -33,6 +36,7 @@ $builder->services->addSingleton(Router::class, RequestRouter::class, function (
 // Load commands
 $builder->commands->loadFromNamespace("Elephox\\Web\\Commands");
 $builder->commands->loadFromNamespace("Elephox\\Plane\\Commands");
+$builder->commands->loadFromNamespace("Elephox\\Builder\\Doctrine\\Commands");
 
 $app = $builder->build();
 try {
