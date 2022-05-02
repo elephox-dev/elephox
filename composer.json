@@ -7,7 +7,7 @@
         "elephox/builder-doctrine": "^0.2",
         "elephox/builder-whoops-handler": "^0.1",
         "elephox/builder-whoops-middleware": "^0.1",
-        "elephox/framework": "^0.4",
+        "elephox/framework": "^0.5",
         "nunomaduro/collision": "^6.2"
     },
     "require-dev": {
