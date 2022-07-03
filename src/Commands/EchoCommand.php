@@ -19,14 +19,14 @@ class EchoCommand implements CommandHandler
 	public function configure(CommandTemplateBuilder $builder): void
 	{
 		$builder
-			->name('echo')
-			->argument('message', 'A string to echo back')
+			->setName('echo')
+			->addArgument('message', description: 'A string to echo back')
 		;
 	}
 
 	public function handle(CommandInvocation $command): int|null
 	{
-		$echo = $command->message;
+		$echo = $command->arguments->message->value;
 
 		$this->logger->info("You typed: $echo");
 

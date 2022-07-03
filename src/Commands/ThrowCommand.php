@@ -20,9 +20,9 @@ class ThrowCommand implements CommandHandler
 	public function configure(CommandTemplateBuilder $builder): void
 	{
 		$builder
-			->name('throw')
-			->description('Throws an exception')
-			->argument('message', 'The message to throw')
+			->setName('throw')
+			->setDescription('Throws an exception')
+			->addArgument('message', description: 'The message to throw')
 		;
 	}
 
@@ -36,6 +36,6 @@ class ThrowCommand implements CommandHandler
 		$this->logger->warning("1...");
 		sleep(1);
 
-		throw new RuntimeException($command->getArgument('message')->value);
+		throw new RuntimeException($command->arguments->message->value);
 	}
 }
