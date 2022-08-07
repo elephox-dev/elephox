@@ -8,7 +8,8 @@
         "elephox/builder-whoops-handler": "dev-develop",
         "elephox/builder-whoops-middleware": "dev-develop",
         "elephox/framework": "dev-develop",
-        "nunomaduro/collision": "^6.2"
+        "nunomaduro/collision": "^6.2",
+        "elephox/templar": "dev-main"
     },
     "require-dev": {
         "elephox/plane": "dev-develop",

@@ -6,6 +6,7 @@ require_once APP_ROOT . '/vendor/autoload.php';
 
 use App\Middlewares\FileExtensionToContentType;
 use App\Middlewares\ProductionExceptionHandler;
+use App\Middlewares\StaticContentHandler;
 use Elephox\Builder\Doctrine\AddsDoctrine;
 use Elephox\Builder\Whoops\AddsWhoopsMiddleware;
 use Elephox\Support\Contract\ExceptionHandler;
@@ -26,7 +27,9 @@ if ($builder->environment->isDevelopment()) {
 	$builder->pipeline->exceptionHandler($handler);
 }
 
-$builder->pipeline->push(new FileExtensionToContentType());
+$builder->pipeline
+	->push(FileExtensionToContentType::class)
+	->push(StaticContentHandler::class);
 $builder->addDoctrine();
 $builder->setRequestRouterEndpoint();
 $builder->service(RequestRouter::class)->loadFromNamespace('App\\Routes');

@@ -14,7 +14,12 @@ class FileExtensionToContentType implements WebMiddleware
 {
 	public function handle(Request $request, Closure $next): ResponseBuilder
 	{
+		/** @var ResponseBuilder $response */
 		$response = $next($request);
+
+		if (!($response->getResponseCode()?->isSuccessful() ?? false)) {
+			return $response;
+		}
 
 		$ext = pathinfo($request->getUrl()->path, PATHINFO_EXTENSION);
 		if (!empty($ext)) {
