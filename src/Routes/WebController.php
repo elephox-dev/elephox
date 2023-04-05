@@ -33,7 +33,7 @@ class WebController {
 	/**
 	 * @throws \ErrorException
 	 */
-	#[Get]
+	#[Get("/")]
 	public function index(): ResponseBuilder {
 		return Response::build()->responseCode(ResponseCode::OK)->htmlBody(
 				$this->getRenderer()->render($this->getContent())
