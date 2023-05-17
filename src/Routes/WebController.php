@@ -28,12 +28,12 @@ use Elephox\Web\Routing\Attribute\Http\Any;
 use Elephox\Web\Routing\Attribute\Http\Get;
 use RuntimeException;
 
-#[Controller("")]
+#[Controller]
 class WebController {
 	/**
 	 * @throws \ErrorException
 	 */
-	#[Get("/")]
+	#[Get]
 	public function index(): ResponseBuilder {
 		return Response::build()->responseCode(ResponseCode::OK)->htmlBody(
 				$this->getRenderer()->render($this->getContent())
@@ -66,7 +66,7 @@ class WebController {
 						children: [
 							new Container(
 								child: new Text(
-									"Hello World",
+									"Hello World!",
 									style: new TextStyle(
 										size: Length::inRem(3),
 										weight: 600,
@@ -97,8 +97,8 @@ HTML
 								new Text("Need to look something up?"),
 								new Text(
 									<<<HTML
-						You can access the Elephox documentation at
-						<a href="https://elephox.dev" target="_blank">elephox.dev</a>.
+You can access the Elephox documentation at
+<a href="https://elephox.dev" target="_blank">elephox.dev</a>.
 HTML
 								)
 							),
@@ -113,16 +113,8 @@ HTML
 		);
 	}
 
-	#[Get]
+	#[Get('throw')]
 	public function throw(): ResponseBuilder {
 		throw new RuntimeException('Test exception');
-	}
-
-	#[Any('regex:.*', -1)]
-	public function notFound(): ResponseBuilder {
-		return Response::build()->responseCode(ResponseCode::NotFound)->fileBody(
-				APP_ROOT . '/views/error404.html',
-				MimeType::TextHtml
-			);
 	}
 }

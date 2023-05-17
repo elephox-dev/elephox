@@ -5,10 +5,8 @@ declare(strict_types=1);
 use Elephox\Builder\Doctrine\AddsDoctrine;
 use Elephox\Builder\Whoops\AddsWhoopsHandler;
 use Elephox\Console\ConsoleApplicationBuilder;
-use Elephox\DI\Contract\ServiceCollection;
-use Elephox\Support\Contract\ExceptionHandler;
 use Elephox\Web\Routing\Contract\Router;
-use Elephox\Web\Routing\RequestRouter;
+use Elephox\Web\Routing\RouterBuilder;
 
 require_once 'vendor/autoload.php';
 const APP_ROOT = __DIR__;
@@ -26,21 +24,19 @@ $builder->addWhoops();
 $builder->addDoctrine();
 
 // Load app commands
-$builder->commands->loadFromNamespace("App\\Commands");
+$builder->commands->addNamespace("App\\Commands");
 
 // Add the request router, so we can use it in commands
-$builder->services->addSingleton(Router::class, RequestRouter::class, function (ServiceCollection $services): RequestRouter {
-	return (new RequestRouter($services))->loadFromNamespace('App\\Routes');
+$builder->services->addSingleton(Router::class, factory: function (): Router {
+	$builder = new RouterBuilder();
+	$builder->addRoutesFromNamespace("App\\Routes");
+	return $builder->build();
 });
 
 // Load commands
-$builder->commands->loadFromNamespace("Elephox\\Web\\Commands");
-$builder->commands->loadFromNamespace("Elephox\\Plane\\Commands");
-$builder->commands->loadFromNamespace("Elephox\\Builder\\Doctrine\\Commands");
+$builder->commands->addNamespace("Elephox\\Web\\Commands");
+$builder->commands->addNamespace("Elephox\\Plane\\Commands");
+$builder->commands->addNamespace("Elephox\\Builder\\Doctrine\\Commands");
 
 $app = $builder->build();
-try {
-	$app->run();
-} catch (Throwable $e) {
-	$app->services->get(ExceptionHandler::class)->handleException($e);
-}
+$app->run();

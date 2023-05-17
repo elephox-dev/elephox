@@ -8,7 +8,6 @@ use App\Middlewares\ProductionExceptionHandler;
 use Elephox\Builder\Doctrine\AddsDoctrine;
 use Elephox\Builder\Whoops\AddsWhoopsMiddleware;
 use Elephox\Support\Contract\ExceptionHandler;
-use Elephox\Web\Routing\RequestRouter;
 use Elephox\Web\WebApplicationBuilder;
 
 class Builder extends WebApplicationBuilder {
@@ -26,8 +25,9 @@ if ($builder->environment->isDevelopment()) {
 }
 
 $builder->addDoctrine();
-$builder->setRequestRouterEndpoint();
-$builder->services->requireService(RequestRouter::class)->loadFromNamespace('App\\Routes');
+
+$builder->addRouting();
+$builder->getRouter()->addRoutesFromNamespace('App\\Routes');
 
 $app = $builder->build();
 $app->run();
